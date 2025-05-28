@@ -476,16 +476,41 @@
 
         @media (max-width: 700px) {
             .projects-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
                 gap: 15px;
+                padding: 0 15px;
             }
 
             .project-card {
-                height: 160px;
+                width: 100%;
+                height: auto;
+                min-height: 160px;
             }
 
-            .more-projects {
-                height: 160px;
+            .carousel-container {
+                width: 100%;
+                padding: 0 15px;
+            }
+
+            .carousel-item {
+                width: 100%;
+            }
+
+            .carousel-item img {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+            }
+
+            .carousel-caption {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+
+            .carousel-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
             }
         }
 
@@ -636,6 +661,9 @@
         const sections = document.querySelectorAll('.section');
         let current = 0;
         let isScrolling = false;
+        let touchStartY = 0;
+        let touchEndY = 0;
+
         function scrollToSection(idx) {
             if (idx < 0 || idx >= sections.length) return;
             isScrolling = true;
@@ -644,6 +672,27 @@
             updateDots(idx);
             current = idx;
         }
+
+        // 添加触摸事件支持
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            if (isScrolling) return;
+            touchEndY = e.changedTouches[0].clientY;
+            const diff = touchStartY - touchEndY;
+            
+            // 设置最小滑动距离
+            if (Math.abs(diff) > 50) {
+                if (diff > 0 && current < sections.length - 1) {
+                    scrollToSection(current + 1);
+                } else if (diff < 0 && current > 0) {
+                    scrollToSection(current - 1);
+                }
+            }
+        }, { passive: true });
+
         function updateDots(idx) {
             document.querySelectorAll('.nav-dot').forEach((dot, i) => {
                 dot.classList.toggle('active', i === idx);
