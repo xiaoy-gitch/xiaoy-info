@@ -374,6 +374,21 @@
         }
 
         @media (max-width: 700px) {
+            body {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            .section {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
             .info-list {
                 padding: 20px;
             }
@@ -713,6 +728,21 @@
                 e.preventDefault();
             }
         }, { passive: false });
+
+        // 添加微信浏览器检测
+        function isWeixinBrowser() {
+            const ua = navigator.userAgent.toLowerCase();
+            return ua.indexOf('micromessenger') !== -1;
+        }
+
+        // 如果是微信浏览器，添加额外的触摸处理
+        if (isWeixinBrowser()) {
+            document.addEventListener('WeixinJSBridgeReady', function() {
+                document.body.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                }, { passive: false });
+            });
+        }
 
         function updateDots(idx) {
             document.querySelectorAll('.nav-dot').forEach((dot, i) => {
