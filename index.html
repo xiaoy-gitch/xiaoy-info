@@ -395,6 +395,58 @@
             .nav-dots {
                 right: 10px;
             }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 0 15px;
+                margin-top: 20px;
+            }
+
+            .project-card {
+                width: 100%;
+                height: auto;
+                min-height: 160px;
+                margin-bottom: 15px;
+            }
+
+            .carousel-container {
+                width: 100%;
+                padding: 0 15px;
+                margin-top: 20px;
+            }
+
+            .carousel {
+                width: 100%;
+                height: 300px;
+            }
+
+            .carousel-item {
+                width: 100%;
+                height: 300px;
+            }
+
+            .carousel-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .carousel-caption {
+                font-size: 0.9rem;
+                padding: 8px;
+                bottom: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.5);
+            }
+
+            .carousel-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+                top: 50%;
+                transform: translateY(-50%);
+            }
         }
         /*九宫格*/
         .projects-grid {
@@ -472,46 +524,6 @@
         .more-content div {
             margin-top: 10px;
             font-size: 1.1rem;
-        }
-
-        @media (max-width: 700px) {
-            .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-                padding: 0 15px;
-            }
-
-            .project-card {
-                width: 100%;
-                height: auto;
-                min-height: 160px;
-            }
-
-            .carousel-container {
-                width: 100%;
-                padding: 0 15px;
-            }
-
-            .carousel-item {
-                width: 100%;
-            }
-
-            .carousel-item img {
-                width: 100%;
-                height: auto;
-                object-fit: cover;
-            }
-
-            .carousel-caption {
-                font-size: 0.9rem;
-                padding: 8px;
-            }
-
-            .carousel-button {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -673,25 +685,34 @@
             current = idx;
         }
 
-        // 添加触摸事件支持
+        // 修改触摸事件处理
         document.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
-        }, { passive: true });
+        }, { passive: false });
 
         document.addEventListener('touchend', (e) => {
             if (isScrolling) return;
             touchEndY = e.changedTouches[0].clientY;
             const diff = touchStartY - touchEndY;
             
-            // 设置最小滑动距离
-            if (Math.abs(diff) > 50) {
+            // 减小滑动距离阈值
+            if (Math.abs(diff) > 30) {
                 if (diff > 0 && current < sections.length - 1) {
+                    e.preventDefault(); // 阻止默认滚动
                     scrollToSection(current + 1);
                 } else if (diff < 0 && current > 0) {
+                    e.preventDefault(); // 阻止默认滚动
                     scrollToSection(current - 1);
                 }
             }
-        }, { passive: true });
+        }, { passive: false });
+
+        // 阻止页面默认滚动
+        document.body.addEventListener('touchmove', (e) => {
+            if (isScrolling) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         function updateDots(idx) {
             document.querySelectorAll('.nav-dot').forEach((dot, i) => {
